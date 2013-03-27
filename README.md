@@ -18,13 +18,33 @@ Une librairie pour l'édition des fichiers de configuration pour le framework PHP
 	// Si le paramètre existe, il est modifié.
     $configEditor->set('default_controller', 'page');
 	// S'il n'existe pas, il est ajouté à la fin du fichier.
-	$configEditor->set('plugins', array('MyPlugins1', 'MyPlugins2');
+	$configEditor->set('plugins', array('MyPlugins1', 'MyPlugins2'));
 ```
 
 4. Sauvegarder les changements dans le fichier :
 ```php
 	// Si le fichier n'existe pas, il est créé automatiquement.
     $configEditor->save();
+```
+
+5. Résultat (fichier test.php) :
+```php
+	// Avant
+	$config['default_controller'] = 'news';
+	
+	// Après
+	$config['default_controller'] = 'page';
+
+	$config['plugins'] = array('MyPlugins1', 'MyPlugins2');
+```
+
+6. Attention ! Pour le moment les paramètres sur plusieurs lignes ne sont pas pris en compte :
+```php
+	// Ce paramètre sera ignoré et une nouvelle ligne sera crée.
+	$config['plugins'] = array(
+		'MyPlugins1',
+		'MyPlugins2'
+	);
 ```
 
 

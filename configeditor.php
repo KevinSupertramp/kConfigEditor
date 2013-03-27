@@ -8,7 +8,8 @@
  */
 
 /**
- * For the moment the library doesn't support multi-line editing.
+ * Warning : For the moment the library doesn't support multi-line editing.
+ * Todo : Add comment. Choose if new line between each settings.
  */
 
 Class ConfigEditor
