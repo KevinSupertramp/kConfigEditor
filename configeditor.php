@@ -16,8 +16,17 @@ Class ConfigEditor
 	public function __construct($file_path)
 	{
 		$this->_file_path = $file_path;
+	}
+
+	public function open()
+	{
 		if (is_file($this->_file_path))
 			$this->_file_data = file_get_contents($this->_file_path);
+
+		if ($this->_file_data)
+			return true;
+
+		return false;
 	}
 
 	public function to_text_array($value)

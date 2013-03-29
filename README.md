@@ -8,9 +8,11 @@ Une librairie pour l'édition des fichiers de configuration pour le framework PHP
 
 1. Placer la librairie dans le dossier "librairies" de kowFramework.
 
-2. Charger la librairie dans le contrôleur et passer en paramètre le chemin vers le fichier :
+2. Charger la librairie dans le contrôleur, passer en paramètre le chemin vers le fichier et ouvrir le fichier :
 ```php
 	$configEditor = $this->load()->library('kConfigEditor/ConfigEditor', 'test.php');
+	if (!$configEditor->open())
+		echo 'Erreur lors de l'ouverture du fichier de configuration. Si vous décidez de sauvegarder le fichier celui-ci sera créé.';
 ```
 
 3. Modifier et/ou ajouter des paramètres du fichier de configurations :
