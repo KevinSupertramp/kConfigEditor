@@ -44,7 +44,7 @@ Class ConfigEditor
 				if (is_string($k))
 				{
 					$arr .= ((!constant($k)) ? '\'' . $k . '\'' : $k) . ' => ';
-					$arr .= ((is_string($v)) ? '\'' . $v . '\'' : $v) . ",\r\n";
+					$arr .= ((is_string($v) and !constant($v)) ? '\'' . $v . '\'' : $v) . ",\r\n";
 				}
 				else
 					$arr .= ((is_string($v) and !constant($v)) ? '\'' . $v . '\'' : $v) . ",\r\n";
