@@ -57,7 +57,7 @@ Une librairie pour l'édition des fichiers de configuration pour le framework PHP
 
 6. Cas concret, édition/ajout de la configuration d'une base de données :
 ```php
-	// A noter les constantes PDO définie comme chaîne de charactère (string).
+	// A noter les constantes PDO définie comme chaîne de caractères (string).
 	$configEditor->set('database', array(
 		'kowcms' => array(
 			'host' 		=> 'localhost',
