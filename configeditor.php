@@ -7,15 +7,11 @@
  * See the LICENSE file for the full license text.
  */
 
-/**
- * Warning : For the moment the library doesn't support multi-line editing.
- * Todo : Add comment. Choose if new line between each settings.
- */
-
 Class ConfigEditor
 {
 	private $_file_path = '';
 	private $_file_data = '';
+	private $_array_depth = 0;
 
 	public function __construct($file_path)
 	{
@@ -27,31 +23,49 @@ Class ConfigEditor
 	public function to_text_array($value)
 	{
 		$arr = '';
+		++$this->_array_depth;
+
 		foreach ($value as $k => $v)
 		{
+			if (empty($arr))
+				$arr .= "array(\r\n";
+
+			for ($i = 0; $i < $this->_array_depth; ++$i)
+				$arr .= '	';
+
 			if (is_array($v))
-				$arr .= ', \'' . $k . '\' => ' . $this->to_text_array($v);
+				$arr .= ((is_string($k)) ? '\'' . $k . '\'' : $k) . ' => ' . $this->to_text_array($v);
 			else
 			{
+				// Not very clean but constant function throw an excepetion if the constant doesn't exist...
+				if (DEBUG_MODE)
+					error_reporting(0);
+
 				if (is_string($k))
 				{
-					$arr .= ((empty($arr)) ? 'array(' : ', ');
-					$arr .= ((is_string($k)) ? '\'' . $k . '\'' : $k) . ' => ';
-					$arr .= ((is_string($v)) ? '\'' . $v . '\'' : $v);
+					$arr .= ((!constant($k)) ? '\'' . $k . '\'' : $k) . ' => ';
+					$arr .= ((is_string($v)) ? '\'' . $v . '\'' : $v) . ",\r\n";
 				}
 				else
-				{
-					$arr .= ((empty($arr)) ? 'array(' : ', ');
-					$arr .= ((is_string($v)) ? '\'' . $v . '\'' : $v);
-				}
+					$arr .= ((is_string($v) and !constant($v)) ? '\'' . $v . '\'' : $v) . ",\r\n";
+
+				// Enable debug mode again
+				if (DEBUG_MODE)
+					error_reporting(E_ALL | E_STRICT);
 			}
 		}
 
+		--$this->_array_depth;
+		for ($i = 0; $i < $this->_array_depth; ++$i)
+			$arr .= '	';
+
 		$value = $arr . ')';
+		if ($this->_array_depth != 0)
+			$value .= "\r\n";
 		return $value;
 	}
 
-	public function set($key, $value)
+	public function set($key, $value, $comment = null)
 	{
 		if (is_array($value))
 			$value = $this->to_text_array($value);
@@ -66,10 +80,12 @@ Class ConfigEditor
 		else
 			$value = '\'' . addslashes($value) . '\'';
 
-		if (preg_match('/\$config\[["\']' . $key . '["\']\] ?= ?["\']?.*["\']?;/', $this->_file_data))
-			$this->_file_data = preg_replace('/\$config\[["\']' . $key . '["\']\] ?= ?["\']?.*["\']?;/', "\$config['" . $key . "'] = " . $value . ";", $this->_file_data);
+		if (preg_match('/\$config\[["\']' . $key . '["\']\](.*);/msU', $this->_file_data))
+			$this->_file_data = preg_replace('/\$config\[["\']' . $key . '["\']\](.*);/msU', "\$config['" . $key . "'] = " . $value . ";", $this->_file_data);
 		else
 			$this->_file_data .= PHP_EOL . '$config[\'' .  $key . '\'] = ' . $value . ';';
+
+		$this->_array_depth = 0;
 	}
 
 	public function save()
