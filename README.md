@@ -38,15 +38,54 @@ Une librairie pour l'édition des fichiers de configuration pour le framework PHP
 	$config['plugins'] = array('MyPlugins1', 'MyPlugins2');
 ```
 
-6. Attention ! Pour le moment les paramètres sur plusieurs lignes ne sont pas pris en compte :
+6. Les constantes sont supportées mais il faut les déclarer en tant que chaîne de caractères (string) :
 ```php
-	// Ce paramètre sera ignoré et une nouvelle ligne sera crée.
-	$config['plugins'] = array(
-		'MyPlugins1',
-		'MyPlugins2'
+	// Exemple
+	$configEditor->set('database', array(
+		'PDO::MYSQL_ATTR_INIT_COMMAND' => 'SET NAMES utf8',
+		'PDO::ATTR_ERRMODE',
+		'PDO::ERRMODE_WARNING',
+	));
+	
+	// Résultat dans le fichier de configuration
+	$config['database'] = array(
+		PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+		PDO::ATTR_ERRMODE,
+		PDO::ERRMODE_WARNING,
 	);
 ```
 
+6. Cas concret, édition/ajout de la configuration d'une base de données :
+```php
+	// A noter les constantes PDO définie comme chaîne de charactère (string).
+	$configEditor->set('database', array(
+		'kowcms' => array(
+			'host' 		=> 'localhost',
+			'port'		=> 3306,
+			'username'	=> 'root',
+			'password'	=> '',
+			'options'	=> array(
+				'PDO::MYSQL_ATTR_INIT_COMMAND' => 'SET NAMES utf8',
+				'PDO::ATTR_ERRMODE', 'PDO::ERRMODE_WARNING'
+			)
+		)
+	));
+	
+	// Résultat dans le fichier de configuration
+	$config['database'] = array(
+		'kowcms' => array(
+			'host' => 'localhost',
+			'port' => 3306,
+			'username' => 'root',
+			'password' => '',
+			'options' => array(
+				PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+				PDO::ATTR_ERRMODE,
+				PDO::ERRMODE_WARNING,
+			)
+		)
+	);
+```
 
 <h2>Auteur</h2>
 Kevin Ryser (27.03.2013). Développé pour kowFramework.
